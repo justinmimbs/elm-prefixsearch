@@ -1,78 +1,55 @@
 module Tests exposing (suite)
 
-import SearchStrings
-import SearchTrie
+import Types exposing (Search, exampleText, fill)
 
 
-suite : List ( String, ( Int, List String ) )
+suite : List ( String, Int, List String )
 suite =
-    [ ( "SearchStrings"
-      , { empty = SearchStrings.empty
-        , insert = SearchStrings.insert
-        , search = SearchStrings.search
-        }
-            |> test
-      )
-    , ( "SearchTrie"
-      , { empty = SearchTrie.empty
-        , insert = SearchTrie.insert
-        , search = SearchTrie.search
-        }
-            |> test
-      )
+    [ test Types.strings
+    , test Types.trie
     ]
 
 
-type alias Search a =
-    { empty : a
-    , insert : Int -> String -> a -> a
-    , search : String -> a -> List Int
-    }
-
-
-test : Search a -> ( Int, List String )
+test : Search a -> ( String, Int, List String )
 test t =
     let
-        items =
-            [ ( 1, "Jane Doe" )
-            , ( 2, "Jan Dyk" )
-            , ( 3, "Jon Doe" )
-            ]
-
         x =
-            List.foldl
-                (\( id, str ) x1 ->
-                    let
-                        terms =
-                            str |> String.toLower |> String.words
-                    in
-                    List.foldl
-                        (\term x2 -> x2 |> t.insert id term)
-                        x1
-                        terms
-                )
-                t.empty
-                items
+            t.empty
+                |> (t.insert 1 "jane" >> t.insert 1 "doe")
+                |> (t.insert 2 "jan" >> t.insert 2 "dyk")
+                |> (t.insert 3 "jon" >> t.insert 3 "doe")
+
+        y =
+            t.empty |> fill exampleText t.insert
 
         tests =
-            [ ( "", [] )
-            , ( "j", [ 1, 2, 3 ] )
-            , ( "ja", [ 1, 2 ] )
-            , ( "jan", [ 1, 2 ] )
-            , ( "jane", [ 1 ] )
-            , ( "janet", [] )
-            , ( "a", [] )
-            , ( "d", [ 1, 2, 3 ] )
-            , ( "doe", [ 1, 3 ] )
-            , ( "doer", [] )
+            [ ( x, "", [] )
+            , ( x, "j", [ 1, 2, 3 ] )
+            , ( x, "ja", [ 1, 2 ] )
+            , ( x, "jan", [ 1, 2 ] )
+            , ( x, "jane", [ 1 ] )
+            , ( x, "janet", [] )
+            , ( x, "a", [] )
+            , ( x, "d", [ 1, 2, 3 ] )
+            , ( x, "doe", [ 1, 3 ] )
+            , ( x, "doer", [] )
+
+            --
+            , ( y, "a", [ 3, 4, 8, 9, 11, 15, 22, 23, 25, 31, 36, 37, 44, 48, 50, 51, 53, 55, 56, 57, 60, 62, 66, 67, 68, 72, 74, 76, 86, 91, 92, 94, 102, 104, 105, 107, 108, 113, 118, 119, 121, 122, 125, 126, 127, 129, 130, 134, 136, 141, 144, 145, 148, 150 ] )
+            , ( y, "am", [ 48, 136, 145 ] )
+            , ( y, "amp", [ 48, 136 ] )
+            , ( y, "amplifi", [ 48, 136 ] )
+            , ( y, "amplific", [ 136 ] )
+            , ( y, "amplification", [ 136 ] )
+            , ( y, "amplifications", [] )
             ]
 
         failures =
             List.filterMap
-                (\( keyword, expected ) ->
+                (\( struct, keyword, expected ) ->
                     let
                         result =
-                            x |> t.search keyword
+                            struct |> t.search keyword
                     in
                     if expected == result then
                         Nothing
@@ -82,4 +59,4 @@ test t =
                 )
                 tests
     in
-    ( List.length tests, failures )
+    ( t.name, List.length tests, failures )

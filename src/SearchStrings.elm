@@ -1,35 +1,33 @@
-module SearchStrings exposing (SearchStrings, empty, insert, search)
+module SearchStrings exposing (Search, empty, insert, search)
 
 import Dict exposing (Dict)
 
 
-type SearchStrings
-    = SearchStrings (Dict Int (List String))
+type alias Search =
+    Dict Int (List String)
 
 
-empty : SearchStrings
+empty : Search
 empty =
-    SearchStrings Dict.empty
+    Dict.empty
 
 
-insert : Int -> String -> SearchStrings -> SearchStrings
-insert id term (SearchStrings dict) =
-    SearchStrings
-        (dict
-            |> Dict.update id
-                (\maybeList ->
-                    case maybeList of
-                        Just list ->
-                            Just (term :: list)
+insert : Int -> String -> Search -> Search
+insert id term dict =
+    dict
+        |> Dict.update id
+            (\maybeList ->
+                case maybeList of
+                    Just list ->
+                        Just (term :: list)
 
-                        Nothing ->
-                            Just [ term ]
-                )
-        )
+                    Nothing ->
+                        Just [ term ]
+            )
 
 
-search : String -> SearchStrings -> List Int
-search keyword (SearchStrings dict) =
+search : String -> Search -> List Int
+search keyword dict =
     if keyword == "" then
         []
 

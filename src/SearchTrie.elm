@@ -1,39 +1,37 @@
-module SearchTrie exposing (SearchTrie, empty, insert, search)
+module SearchTrie exposing (Search, empty, insert, search)
 
 import Dict exposing (Dict)
 import Trie exposing (Trie)
 
 
-type SearchTrie
-    = SearchTrie (Dict Int Trie)
+type alias Search =
+    Dict Int Trie
 
 
-empty : SearchTrie
+empty : Search
 empty =
-    SearchTrie Dict.empty
+    Dict.empty
 
 
-insert : Int -> String -> SearchTrie -> SearchTrie
-insert id term (SearchTrie dict) =
-    SearchTrie
-        (dict
-            |> Dict.update id
-                (\maybeTrie ->
-                    (case maybeTrie of
-                        Just trie ->
-                            trie
+insert : Int -> String -> Search -> Search
+insert id term dict =
+    dict
+        |> Dict.update id
+            (\maybeTrie ->
+                (case maybeTrie of
+                    Just trie ->
+                        trie
 
-                        Nothing ->
-                            Trie.empty
-                    )
-                        |> Trie.insert term
-                        |> Just
+                    Nothing ->
+                        Trie.empty
                 )
-        )
+                    |> Trie.insert term
+                    |> Just
+            )
 
 
-search : String -> SearchTrie -> List Int
-search keyword (SearchTrie dict) =
+search : String -> Search -> List Int
+search keyword dict =
     if keyword == "" then
         []
 
