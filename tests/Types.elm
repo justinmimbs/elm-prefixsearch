@@ -1,7 +1,8 @@
-module Types exposing (Search, exampleText, fill, strings, trie)
+module Types exposing (Search, exampleText, fill, strings, trie, trieset)
 
 import SearchStrings
 import SearchTrie
+import SearchTrieSet
 
 
 type alias Search a =
@@ -27,6 +28,15 @@ trie =
     , empty = SearchTrie.empty
     , insert = SearchTrie.insert
     , search = SearchTrie.search
+    }
+
+
+trieset : Search SearchTrieSet.Search
+trieset =
+    { name = "TrieSet"
+    , empty = SearchTrieSet.empty
+    , insert = SearchTrieSet.insert
+    , search = SearchTrieSet.search
     }
 
 

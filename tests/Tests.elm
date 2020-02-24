@@ -7,6 +7,7 @@ suite : List ( String, Int, List String )
 suite =
     [ test Types.strings
     , test Types.trie
+    , test Types.trieset
     ]
 
 
@@ -23,7 +24,7 @@ test t =
             t.empty |> fill exampleText t.insert
 
         tests =
-            [ ( x, "", [] )
+            [ ( x, "", [ 1, 2, 3 ] )
             , ( x, "j", [ 1, 2, 3 ] )
             , ( x, "ja", [ 1, 2 ] )
             , ( x, "jan", [ 1, 2 ] )

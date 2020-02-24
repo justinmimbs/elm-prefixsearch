@@ -33,7 +33,7 @@ insert id term dict =
 search : String -> Search -> List Int
 search keyword dict =
     if keyword == "" then
-        []
+        dict |> Dict.keys
 
     else
         dict
