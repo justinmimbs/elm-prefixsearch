@@ -1,14 +1,22 @@
 module Tests exposing (suite)
 
-import Simple
+import SearchStrings
+import SearchTrie
 
 
 suite : List ( String, ( Int, List String ) )
 suite =
-    [ ( "Simple"
-      , { empty = Simple.empty
-        , insert = Simple.insert
-        , search = Simple.search
+    [ ( "SearchStrings"
+      , { empty = SearchStrings.empty
+        , insert = SearchStrings.insert
+        , search = SearchStrings.search
+        }
+            |> test
+      )
+    , ( "SearchTrie"
+      , { empty = SearchTrie.empty
+        , insert = SearchTrie.insert
+        , search = SearchTrie.search
         }
             |> test
       )
@@ -56,6 +64,7 @@ test t =
             , ( "a", [] )
             , ( "d", [ 1, 2, 3 ] )
             , ( "doe", [ 1, 3 ] )
+            , ( "doer", [] )
             ]
 
         failures =

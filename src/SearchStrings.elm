@@ -1,20 +1,20 @@
-module Simple exposing (Simple, empty, insert, search)
+module SearchStrings exposing (SearchStrings, empty, insert, search)
 
 import Dict exposing (Dict)
 
 
-type Simple
-    = Simple (Dict Int (List String))
+type SearchStrings
+    = SearchStrings (Dict Int (List String))
 
 
-empty : Simple
+empty : SearchStrings
 empty =
-    Simple Dict.empty
+    SearchStrings Dict.empty
 
 
-insert : Int -> String -> Simple -> Simple
-insert id term (Simple dict) =
-    Simple
+insert : Int -> String -> SearchStrings -> SearchStrings
+insert id term (SearchStrings dict) =
+    SearchStrings
         (dict
             |> Dict.update id
                 (\maybeList ->
@@ -28,8 +28,8 @@ insert id term (Simple dict) =
         )
 
 
-search : String -> Simple -> List Int
-search keyword (Simple dict) =
+search : String -> SearchStrings -> List Int
+search keyword (SearchStrings dict) =
     if keyword == "" then
         []
 
