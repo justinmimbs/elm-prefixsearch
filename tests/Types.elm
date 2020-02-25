@@ -1,7 +1,8 @@
-module Types exposing (Search, exampleText, fill, strings, trie, trieset)
+module Types exposing (Search, exampleText, fill, strings, trie, trielist, trieset)
 
 import SearchStrings
 import SearchTrie
+import SearchTrieList
 import SearchTrieSet
 
 
@@ -37,6 +38,15 @@ trieset =
     , empty = SearchTrieSet.empty
     , insert = SearchTrieSet.insert
     , search = SearchTrieSet.search
+    }
+
+
+trielist : Search SearchTrieList.Search
+trielist =
+    { name = "TrieList"
+    , empty = SearchTrieList.empty
+    , insert = SearchTrieList.insert
+    , search = SearchTrieList.search
     }
 
 

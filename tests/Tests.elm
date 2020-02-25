@@ -8,6 +8,7 @@ suite =
     [ test Types.strings
     , test Types.trie
     , test Types.trieset
+    , test Types.trielist
     ]
 
 
