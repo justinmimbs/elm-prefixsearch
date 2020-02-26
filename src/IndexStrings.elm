@@ -13,32 +13,52 @@ empty =
 
 
 insert : Int -> String -> Index -> Index
-insert id term dict =
-    dict
-        |> Dict.update id
-            (\maybeList ->
-                case maybeList of
-                    Just list ->
-                        Just (term :: list)
+insert id string dict =
+    case string |> toWords of
+        [] ->
+            dict
 
-                    Nothing ->
-                        Just [ term ]
-            )
+        terms ->
+            dict
+                |> Dict.update id
+                    (\maybeList ->
+                        case maybeList of
+                            Just list ->
+                                Just (terms ++ list)
+
+                            Nothing ->
+                                Just terms
+                    )
 
 
 search : String -> Index -> List Int
-search keyword dict =
-    if keyword == "" then
-        dict |> Dict.keys
+search string dict =
+    case string |> toWords of
+        [] ->
+            dict |> Dict.keys
 
-    else
-        dict
-            |> Dict.filter
-                (\_ terms ->
-                    terms
-                        |> List.any
-                            (\term ->
-                                term |> String.startsWith keyword
-                            )
-                )
-            |> Dict.keys
+        keywords ->
+            dict
+                |> Dict.filter
+                    (\_ terms ->
+                        keywords
+                            |> List.all
+                                (\keyword ->
+                                    terms
+                                        |> List.any
+                                            (\term ->
+                                                term |> String.startsWith keyword
+                                            )
+                                )
+                    )
+                |> Dict.keys
+
+
+toWords : String -> List String
+toWords string =
+    case string |> String.trim |> String.toLower of
+        "" ->
+            []
+
+        nonempty ->
+            String.words nonempty

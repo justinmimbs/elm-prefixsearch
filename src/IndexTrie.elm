@@ -14,31 +14,53 @@ empty =
 
 
 insert : Int -> String -> Index -> Index
-insert id term dict =
-    dict
-        |> Dict.update id
-            (\maybeTrie ->
-                (case maybeTrie of
-                    Just trie ->
-                        trie
+insert id string dict =
+    case string |> toWords of
+        [] ->
+            dict
 
-                    Nothing ->
-                        Trie.empty
-                )
-                    |> Trie.insert term
-                    |> Just
-            )
+        terms ->
+            dict
+                |> Dict.update id
+                    (\maybeTrie ->
+                        List.foldl
+                            Trie.insert
+                            (case maybeTrie of
+                                Just trie ->
+                                    trie
+
+                                Nothing ->
+                                    Trie.empty
+                            )
+                            terms
+                            |> Just
+                    )
 
 
 search : String -> Index -> List Int
-search keyword dict =
-    if keyword == "" then
-        dict |> Dict.keys
+search string dict =
+    case string |> toWords of
+        [] ->
+            dict |> Dict.keys
 
-    else
-        dict
-            |> Dict.filter
-                (\_ terms ->
-                    terms |> Trie.match keyword
-                )
-            |> Dict.keys
+        keywords ->
+            dict
+                |> Dict.filter
+                    (\_ terms ->
+                        keywords
+                            |> List.all
+                                (\keyword ->
+                                    terms |> Trie.match keyword
+                                )
+                    )
+                |> Dict.keys
+
+
+toWords : String -> List String
+toWords string =
+    case string |> String.trim |> String.toLower of
+        "" ->
+            []
+
+        nonempty ->
+            String.words nonempty
