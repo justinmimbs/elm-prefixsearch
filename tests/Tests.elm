@@ -1,5 +1,6 @@
 module Tests exposing (suite)
 
+import SortedList
 import Types exposing (Search, exampleText, fill)
 
 
@@ -9,6 +10,7 @@ suite =
     , test Types.trie
     , test Types.trieset
     , test Types.trielist
+    , tests_sortedList
     ]
 
 
@@ -49,16 +51,74 @@ test t =
         failures =
             List.filterMap
                 (\( struct, keyword, expected ) ->
-                    let
-                        result =
-                            struct |> t.search keyword
-                    in
-                    if expected == result then
-                        Nothing
-
-                    else
-                        Just (( keyword, expected, result ) |> Debug.toString)
+                    testEqual keyword (struct |> t.search keyword) expected
                 )
                 tests
     in
     ( t.name, List.length tests, failures )
+
+
+tests_sortedList : ( String, Int, List String )
+tests_sortedList =
+    let
+        fromList =
+            List.foldl SortedList.insert []
+
+        tests_insert =
+            List.map
+                (\( items, expected ) ->
+                    testEqual "insert" (fromList items) expected
+                )
+                [ ( [], [] )
+                , ( [ 1, 2, 3, 4, 5 ], [ 1, 2, 3, 4, 5 ] )
+                , ( [ 5, 1, 3, 4, 2 ], [ 1, 2, 3, 4, 5 ] )
+                , ( [ 2, 3, 5, 1, 3, 3, 4, 1, 2, 1, 1 ], [ 1, 2, 3, 4, 5 ] )
+                ]
+
+        tests_union =
+            List.concatMap
+                (\( a, b, expected ) ->
+                    testCommutativeMonoid "union" SortedList.union (fromList a) (fromList b) expected
+                )
+                [ ( [ 1, 2, 3, 4, 5 ], [ 1, 2, 3, 4, 5 ], [ 1, 2, 3, 4, 5 ] )
+                , ( [ 1, 2, 3, 4, 5 ], [], [ 1, 2, 3, 4, 5 ] )
+                , ( [ 1, 3, 4 ], [ 2, 5 ], [ 1, 2, 3, 4, 5 ] )
+                , ( [ 1, 2, 3, 4 ], [ 2, 3, 4, 5 ], [ 1, 2, 3, 4, 5 ] )
+                , ( [ 1, 2, 3, 4, 5 ], [ 3 ], [ 1, 2, 3, 4, 5 ] )
+                ]
+
+        tests_intersect =
+            List.concatMap
+                (\( a, b, expected ) ->
+                    testCommutativeMonoid "intersect" SortedList.intersect (fromList a) (fromList b) expected
+                )
+                [ ( [ 1, 2, 3, 4, 5 ], [ 1, 2, 3, 4, 5 ], [ 1, 2, 3, 4, 5 ] )
+                , ( [ 1, 2, 3, 4, 5 ], [], [] )
+                , ( [ 1, 3, 4 ], [ 2, 5 ], [] )
+                , ( [ 1, 2, 3, 4 ], [ 2, 3, 4, 5 ], [ 2, 3, 4 ] )
+                , ( [ 1, 2, 3, 4, 5 ], [ 3 ], [ 3 ] )
+                ]
+
+        tests =
+            tests_insert ++ tests_union ++ tests_intersect
+
+        failures =
+            tests |> List.filterMap identity
+    in
+    ( "SortedList", List.length tests, failures )
+
+
+testEqual : String -> a -> a -> Maybe String
+testEqual name left right =
+    if left == right then
+        Nothing
+
+    else
+        Just (( name, left, right ) |> Debug.toString)
+
+
+testCommutativeMonoid : String -> (a -> a -> a) -> a -> a -> a -> List (Maybe String)
+testCommutativeMonoid name f a b expected =
+    [ testEqual name (f a b) expected
+    , testEqual name (f b a) expected
+    ]

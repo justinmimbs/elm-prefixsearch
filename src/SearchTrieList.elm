@@ -1,6 +1,7 @@
 module SearchTrieList exposing (Search, empty, insert, search)
 
 import Dict exposing (Dict)
+import SortedList
 
 
 type Search
@@ -28,7 +29,7 @@ insertHelp id chars (Search { ends, cont }) =
     case chars of
         [] ->
             Search
-                { ends = ends |> listInsert id
+                { ends = ends |> SortedList.insert id
                 , cont = cont
                 }
 
@@ -77,72 +78,7 @@ collect : Search -> List Int
 collect (Search { ends, cont }) =
     Dict.foldl
         (\_ next result ->
-            listMerge (collect next) result
+            SortedList.union (collect next) result
         )
         ends
         cont
-
-
-
--- sorted, distinct list
-
-
-listInsert : comparable -> List comparable -> List comparable
-listInsert x list =
-    listInsertHelp list [] x list
-
-
-listInsertHelp : List comparable -> List comparable -> comparable -> List comparable -> List comparable
-listInsertHelp original rev x list =
-    case list of
-        [] ->
-            listPour rev (x :: [])
-
-        head :: rest ->
-            case compare x head of
-                LT ->
-                    listPour rev (x :: list)
-
-                EQ ->
-                    original
-
-                GT ->
-                    listInsertHelp original (head :: rev) x rest
-
-
-listPour : List a -> List a -> List a
-listPour source target =
-    case source of
-        [] ->
-            target
-
-        head :: rest ->
-            listPour rest (head :: target)
-
-
-listMerge : List comparable -> List comparable -> List comparable
-listMerge listA listB =
-    listMergeHelp [] listA listB
-
-
-listMergeHelp : List comparable -> List comparable -> List comparable -> List comparable
-listMergeHelp rev listA listB =
-    case listA of
-        [] ->
-            listPour rev listB
-
-        a :: restA ->
-            case listB of
-                [] ->
-                    listPour rev listA
-
-                b :: restB ->
-                    case compare a b of
-                        LT ->
-                            listMergeHelp (a :: rev) restA listB
-
-                        EQ ->
-                            listMergeHelp (a :: rev) restA restB
-
-                        GT ->
-                            listMergeHelp (b :: rev) listA restB
