@@ -1,12 +1,12 @@
-module Types exposing (Search, exampleText, fill, strings, trie, trielist, trieset)
+module Types exposing (Index, exampleText, fill, strings, trie, trielist, trieset)
 
-import SearchStrings
-import SearchTrie
-import SearchTrieList
-import SearchTrieSet
+import IndexStrings
+import IndexTrie
+import IndexTrieList
+import IndexTrieSet
 
 
-type alias Search a =
+type alias Index a =
     { name : String
     , empty : a
     , insert : Int -> String -> a -> a
@@ -14,39 +14,39 @@ type alias Search a =
     }
 
 
-strings : Search SearchStrings.Search
+strings : Index IndexStrings.Index
 strings =
     { name = "Strings"
-    , empty = SearchStrings.empty
-    , insert = SearchStrings.insert
-    , search = SearchStrings.search
+    , empty = IndexStrings.empty
+    , insert = IndexStrings.insert
+    , search = IndexStrings.search
     }
 
 
-trie : Search SearchTrie.Search
+trie : Index IndexTrie.Index
 trie =
     { name = "Trie"
-    , empty = SearchTrie.empty
-    , insert = SearchTrie.insert
-    , search = SearchTrie.search
+    , empty = IndexTrie.empty
+    , insert = IndexTrie.insert
+    , search = IndexTrie.search
     }
 
 
-trieset : Search SearchTrieSet.Search
+trieset : Index IndexTrieSet.Index
 trieset =
     { name = "TrieSet"
-    , empty = SearchTrieSet.empty
-    , insert = SearchTrieSet.insert
-    , search = SearchTrieSet.search
+    , empty = IndexTrieSet.empty
+    , insert = IndexTrieSet.insert
+    , search = IndexTrieSet.search
     }
 
 
-trielist : Search SearchTrieList.Search
+trielist : Index IndexTrieList.Index
 trielist =
     { name = "TrieList"
-    , empty = SearchTrieList.empty
-    , insert = SearchTrieList.insert
-    , search = SearchTrieList.search
+    , empty = IndexTrieList.empty
+    , insert = IndexTrieList.insert
+    , search = IndexTrieList.search
     }
 
 

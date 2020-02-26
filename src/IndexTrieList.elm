@@ -1,40 +1,40 @@
-module SearchTrieList exposing (Search, empty, insert, search)
+module IndexTrieList exposing (Index, empty, insert, search)
 
 import Dict exposing (Dict)
 import SortedList
 
 
-type Search
-    = Search
+type Index
+    = Index
         { ends : List Int
-        , cont : Dict Char Search
+        , cont : Dict Char Index
         }
 
 
-empty : Search
+empty : Index
 empty =
-    Search
+    Index
         { ends = []
         , cont = Dict.empty
         }
 
 
-insert : Int -> String -> Search -> Search
+insert : Int -> String -> Index -> Index
 insert id term x =
     insertHelp id (term |> String.toList) x
 
 
-insertHelp : Int -> List Char -> Search -> Search
-insertHelp id chars (Search { ends, cont }) =
+insertHelp : Int -> List Char -> Index -> Index
+insertHelp id chars (Index { ends, cont }) =
     case chars of
         [] ->
-            Search
+            Index
                 { ends = ends |> SortedList.insert id
                 , cont = cont
                 }
 
         char :: rest ->
-            Search
+            Index
                 { ends = ends
                 , cont =
                     cont
@@ -53,14 +53,14 @@ insertHelp id chars (Search { ends, cont }) =
                 }
 
 
-search : String -> Search -> List Int
+search : String -> Index -> List Int
 search keyword x =
     seek (keyword |> String.toList) x
         |> collect
 
 
-seek : List Char -> Search -> Search
-seek chars ((Search { ends, cont }) as x) =
+seek : List Char -> Index -> Index
+seek chars ((Index { ends, cont }) as x) =
     case chars of
         [] ->
             x
@@ -74,8 +74,8 @@ seek chars ((Search { ends, cont }) as x) =
                     empty
 
 
-collect : Search -> List Int
-collect (Search { ends, cont }) =
+collect : Index -> List Int
+collect (Index { ends, cont }) =
     Dict.foldl
         (\_ next result ->
             SortedList.union (collect next) result

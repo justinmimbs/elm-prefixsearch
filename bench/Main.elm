@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Benchmark exposing (Benchmark)
 import Benchmark.Runner
-import Types exposing (Search, exampleText, fill)
+import Types exposing (Index, exampleText, fill)
 
 
 main : Benchmark.Runner.BenchmarkProgram
@@ -19,7 +19,7 @@ benchmarks =
         )
 
 
-compare : Search a -> Search b -> String -> Benchmark
+compare : Index a -> Index b -> String -> Benchmark
 compare a b =
     let
         x =

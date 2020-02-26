@@ -1,7 +1,7 @@
 module Tests exposing (suite)
 
 import SortedList
-import Types exposing (Search, exampleText, fill)
+import Types exposing (Index, exampleText, fill)
 
 
 suite : List ( String, Int, List String )
@@ -14,7 +14,7 @@ suite =
     ]
 
 
-test : Search a -> ( String, Int, List String )
+test : Index a -> ( String, Int, List String )
 test t =
     let
         x =

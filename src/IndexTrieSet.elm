@@ -1,40 +1,40 @@
-module SearchTrieSet exposing (Search, empty, insert, search)
+module IndexTrieSet exposing (Index, empty, insert, search)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
 
 
-type Search
-    = Search
+type Index
+    = Index
         { ends : Set Int
-        , cont : Dict Char Search
+        , cont : Dict Char Index
         }
 
 
-empty : Search
+empty : Index
 empty =
-    Search
+    Index
         { ends = Set.empty
         , cont = Dict.empty
         }
 
 
-insert : Int -> String -> Search -> Search
+insert : Int -> String -> Index -> Index
 insert id term x =
     insertHelp id (term |> String.toList) x
 
 
-insertHelp : Int -> List Char -> Search -> Search
-insertHelp id chars (Search { ends, cont }) =
+insertHelp : Int -> List Char -> Index -> Index
+insertHelp id chars (Index { ends, cont }) =
     case chars of
         [] ->
-            Search
+            Index
                 { ends = ends |> Set.insert id
                 , cont = cont
                 }
 
         char :: rest ->
-            Search
+            Index
                 { ends = ends
                 , cont =
                     cont
@@ -53,15 +53,15 @@ insertHelp id chars (Search { ends, cont }) =
                 }
 
 
-search : String -> Search -> List Int
+search : String -> Index -> List Int
 search keyword x =
     seek (keyword |> String.toList) x
         |> collect
         |> Set.toList
 
 
-seek : List Char -> Search -> Search
-seek chars ((Search { ends, cont }) as x) =
+seek : List Char -> Index -> Index
+seek chars ((Index { ends, cont }) as x) =
     case chars of
         [] ->
             x
@@ -75,8 +75,8 @@ seek chars ((Search { ends, cont }) as x) =
                     empty
 
 
-collect : Search -> Set Int
-collect (Search { ends, cont }) =
+collect : Index -> Set Int
+collect (Index { ends, cont }) =
     Dict.foldl
         (\_ next result ->
             Set.union (collect next) result

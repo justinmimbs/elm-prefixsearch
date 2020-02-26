@@ -1,19 +1,19 @@
-module SearchTrie exposing (Search, empty, insert, search)
+module IndexTrie exposing (Index, empty, insert, search)
 
 import Dict exposing (Dict)
 import Trie exposing (Trie)
 
 
-type alias Search =
+type alias Index =
     Dict Int Trie
 
 
-empty : Search
+empty : Index
 empty =
     Dict.empty
 
 
-insert : Int -> String -> Search -> Search
+insert : Int -> String -> Index -> Index
 insert id term dict =
     dict
         |> Dict.update id
@@ -30,7 +30,7 @@ insert id term dict =
             )
 
 
-search : String -> Search -> List Int
+search : String -> Index -> List Int
 search keyword dict =
     if keyword == "" then
         dict |> Dict.keys
