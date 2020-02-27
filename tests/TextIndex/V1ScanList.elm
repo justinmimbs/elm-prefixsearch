@@ -1,18 +1,18 @@
-module IndexStrings exposing (Index, empty, insert, search, searchAll)
+module TextIndex.V1ScanList exposing (TextIndex, empty, insert, search, searchAll)
 
 import Dict exposing (Dict)
 
 
-type alias Index =
+type alias TextIndex =
     Dict Int (List String)
 
 
-empty : Index
+empty : TextIndex
 empty =
     Dict.empty
 
 
-insert : Int -> String -> Index -> Index
+insert : Int -> String -> TextIndex -> TextIndex
 insert id term dict =
     dict
         |> Dict.update id
@@ -26,7 +26,7 @@ insert id term dict =
             )
 
 
-search : String -> Index -> List Int
+search : String -> TextIndex -> List Int
 search keyword dict =
     if keyword == "" then
         dict |> Dict.keys
@@ -44,7 +44,7 @@ search keyword dict =
             |> Dict.keys
 
 
-searchAll : List String -> Index -> List Int
+searchAll : List String -> TextIndex -> List Int
 searchAll keywords dict =
     Dict.foldr
         (\id terms result ->

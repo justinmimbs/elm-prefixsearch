@@ -1,20 +1,21 @@
 module Tests exposing (suite)
 
+import ExampleData exposing (exampleText, fill)
 import SortedList
-import Types exposing (Index, exampleText, fill)
+import TextIndex.Versions as Versions exposing (Version)
 
 
 suite : List ( String, Int, List String )
 suite =
-    [ testIndex Types.strings
-    , testIndex Types.trie
-    , testIndex Types.trieset
-    , testIndex Types.trielist
+    [ testIndex Versions.scanList
+    , testIndex Versions.scanTrie
+    , testIndex Versions.seekSet
+    , testIndex Versions.seekList
     , tests_sortedList
     ]
 
 
-testIndex : Index a -> ( String, Int, List String )
+testIndex : Version a -> ( String, Int, List String )
 testIndex t =
     let
         x =

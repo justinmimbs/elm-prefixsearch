@@ -2,16 +2,17 @@ module Main exposing (main)
 
 import Benchmark exposing (Benchmark)
 import Benchmark.Runner
-import Types exposing (Index, exampleText, fill)
+import ExampleData exposing (exampleText, fill)
+import TextIndex.Versions as Versions exposing (Version)
 
 
 main : Benchmark.Runner.BenchmarkProgram
 main =
     Benchmark.Runner.program <|
-        benchmark_searchAll Types.trieset Types.trielist
+        benchmark_searchAll Versions.scanList Versions.seekList
 
 
-benchmark_search : Index a -> Index b -> Benchmark
+benchmark_search : Version a -> Version b -> Benchmark
 benchmark_search a b =
     let
         x =
@@ -38,7 +39,7 @@ benchmark_search a b =
         )
 
 
-benchmark_searchAll : Index a -> Index b -> Benchmark
+benchmark_searchAll : Version a -> Version b -> Benchmark
 benchmark_searchAll a b =
     let
         x =

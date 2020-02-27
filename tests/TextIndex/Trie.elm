@@ -1,4 +1,4 @@
-module Trie exposing (Trie, empty, insert, match)
+module TextIndex.Trie exposing (Trie, empty, insert, match)
 
 import Dict exposing (Dict)
 

@@ -1,40 +1,40 @@
-module IndexTrieList exposing (Index, empty, insert, search, searchAll)
+module TextIndex.V3SeekSet exposing (TextIndex, empty, insert, search, searchAll)
 
 import Dict exposing (Dict)
-import SortedList
+import Set exposing (Set)
 
 
-type Index
-    = Index
-        { ends : List Int
-        , cont : Dict Char Index
+type TextIndex
+    = TextIndex
+        { ends : Set Int
+        , cont : Dict Char TextIndex
         }
 
 
-empty : Index
+empty : TextIndex
 empty =
-    Index
-        { ends = []
+    TextIndex
+        { ends = Set.empty
         , cont = Dict.empty
         }
 
 
-insert : Int -> String -> Index -> Index
+insert : Int -> String -> TextIndex -> TextIndex
 insert id term x =
     insertHelp id (term |> String.toList) x
 
 
-insertHelp : Int -> List Char -> Index -> Index
-insertHelp id chars (Index { ends, cont }) =
+insertHelp : Int -> List Char -> TextIndex -> TextIndex
+insertHelp id chars (TextIndex { ends, cont }) =
     case chars of
         [] ->
-            Index
-                { ends = ends |> SortedList.insert id
+            TextIndex
+                { ends = ends |> Set.insert id
                 , cont = cont
                 }
 
         char :: rest ->
-            Index
+            TextIndex
                 { ends = ends
                 , cont =
                     cont
@@ -53,29 +53,36 @@ insertHelp id chars (Index { ends, cont }) =
                 }
 
 
-search : String -> Index -> List Int
-search keyword x =
+search_ : String -> TextIndex -> Set Int
+search_ keyword x =
     seek (keyword |> String.toList) x
         |> collect
 
 
-searchAll : List String -> Index -> List Int
+search : String -> TextIndex -> List Int
+search keyword x =
+    search_ keyword x |> Set.toList
+
+
+searchAll : List String -> TextIndex -> List Int
 searchAll keywords x =
-    case keywords of
+    (case keywords of
         [] ->
             collect x
 
         first :: rest ->
             List.foldl
                 (\next result ->
-                    search next x |> SortedList.intersect result
+                    search_ next x |> Set.intersect result
                 )
-                (search first x)
+                (search_ first x)
                 rest
+    )
+        |> Set.toList
 
 
-seek : List Char -> Index -> Index
-seek chars ((Index { ends, cont }) as x) =
+seek : List Char -> TextIndex -> TextIndex
+seek chars ((TextIndex { ends, cont }) as x) =
     case chars of
         [] ->
             x
@@ -89,16 +96,11 @@ seek chars ((Index { ends, cont }) as x) =
                     empty
 
 
-collect : Index -> List Int
-collect (Index { ends, cont }) =
+collect : TextIndex -> Set Int
+collect (TextIndex { ends, cont }) =
     Dict.foldl
         (\_ next result ->
-            case result of
-                [] ->
-                    collect next
-
-                _ ->
-                    collect next |> SortedList.union result
+            Set.union (collect next) result
         )
         ends
         cont
