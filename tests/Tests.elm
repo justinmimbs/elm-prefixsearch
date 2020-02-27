@@ -71,6 +71,7 @@ testIndex t =
                 , ( y, [ "def", "con" ], [ 54, 126 ] )
                 , ( y, [ "defa", "cons" ], [ 126 ] )
                 , ( y, [ "default", "conscience" ], [ 126 ] )
+                , ( y, [ "defaults", "consciences" ], [] )
                 ]
 
         tests =

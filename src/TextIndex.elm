@@ -68,7 +68,12 @@ searchAll keywords x =
         first :: rest ->
             List.foldl
                 (\next result ->
-                    search next x |> SortedList.intersect result
+                    case result of
+                        [] ->
+                            []
+
+                        _ ->
+                            search next x |> SortedList.intersect result
                 )
                 (search first x)
                 rest

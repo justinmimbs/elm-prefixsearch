@@ -9,7 +9,7 @@ import TextIndex.Versions as Versions exposing (Version)
 main : Benchmark.Runner.BenchmarkProgram
 main =
     Benchmark.Runner.program <|
-        benchmark_searchAll Versions.scanList Versions.seekList
+        benchmark_searchAll Versions.seekSet Versions.seekList
 
 
 benchmark_search : Version a -> Version b -> Benchmark
@@ -54,6 +54,7 @@ benchmark_searchAll a b =
          , [ "def", "con" ]
          , [ "defa", "cons" ]
          , [ "default", "conscience" ]
+         , [ "defaults", "consciences" ]
          ]
             |> List.map
                 (\keywords ->
