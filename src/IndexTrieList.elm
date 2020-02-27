@@ -93,7 +93,12 @@ collect : Index -> List Int
 collect (Index { ends, cont }) =
     Dict.foldl
         (\_ next result ->
-            SortedList.union (collect next) result
+            case result of
+                [] ->
+                    collect next
+
+                _ ->
+                    collect next |> SortedList.union result
         )
         ends
         cont
