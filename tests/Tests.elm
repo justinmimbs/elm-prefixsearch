@@ -19,9 +19,9 @@ test t =
     let
         x =
             t.empty
-                |> t.insert 1 "Jane Doe"
-                |> t.insert 2 "Jan Dyk"
-                |> t.insert 3 "Jon Doe"
+                |> (t.insert 1 "jane" >> t.insert 1 "doe")
+                |> (t.insert 2 "jan" >> t.insert 2 "dyk")
+                |> (t.insert 3 "jon" >> t.insert 3 "doe")
 
         y =
             t.empty |> fill exampleText t.insert
@@ -37,10 +37,6 @@ test t =
             , ( x, "d", [ 1, 2, 3 ] )
             , ( x, "doe", [ 1, 3 ] )
             , ( x, "doer", [] )
-            , ( x, "j d", [ 1, 2, 3 ] )
-            , ( x, "ja d", [ 1, 2 ] )
-            , ( x, "ja do", [ 1 ] )
-            , ( x, "jo dy", [] )
 
             --
             , ( y, "a", [ 3, 4, 8, 9, 11, 15, 22, 23, 25, 31, 36, 37, 44, 48, 50, 51, 53, 55, 56, 57, 60, 62, 66, 67, 68, 72, 74, 76, 86, 91, 92, 94, 102, 104, 105, 107, 108, 113, 118, 119, 121, 122, 125, 126, 127, 129, 130, 134, 136, 141, 144, 145, 148, 150 ] )

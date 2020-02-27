@@ -13,52 +13,32 @@ empty =
 
 
 insert : Int -> String -> Index -> Index
-insert id string dict =
-    case string |> toWords of
-        [] ->
-            dict
+insert id term dict =
+    dict
+        |> Dict.update id
+            (\maybeList ->
+                case maybeList of
+                    Just list ->
+                        Just (term :: list)
 
-        terms ->
-            dict
-                |> Dict.update id
-                    (\maybeList ->
-                        case maybeList of
-                            Just list ->
-                                Just (terms ++ list)
-
-                            Nothing ->
-                                Just terms
-                    )
+                    Nothing ->
+                        Just [ term ]
+            )
 
 
 search : String -> Index -> List Int
-search string dict =
-    case string |> toWords of
-        [] ->
-            dict |> Dict.keys
+search keyword dict =
+    if keyword == "" then
+        dict |> Dict.keys
 
-        keywords ->
-            dict
-                |> Dict.filter
-                    (\_ terms ->
-                        keywords
-                            |> List.all
-                                (\keyword ->
-                                    terms
-                                        |> List.any
-                                            (\term ->
-                                                term |> String.startsWith keyword
-                                            )
-                                )
-                    )
-                |> Dict.keys
-
-
-toWords : String -> List String
-toWords string =
-    case string |> String.trim |> String.toLower of
-        "" ->
-            []
-
-        nonempty ->
-            String.words nonempty
+    else
+        dict
+            |> Dict.filter
+                (\_ terms ->
+                    terms
+                        |> List.any
+                            (\term ->
+                                term |> String.startsWith keyword
+                            )
+                )
+            |> Dict.keys

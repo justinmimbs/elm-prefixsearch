@@ -20,18 +20,8 @@ empty =
 
 
 insert : Int -> String -> Index -> Index
-insert id text x =
-    case text |> toWords of
-        [] ->
-            x
-
-        terms ->
-            List.foldl
-                (\term x_ ->
-                    insertHelp id (term |> String.toList) x_
-                )
-                x
-                terms
+insert id term x =
+    insertHelp id (term |> String.toList) x
 
 
 insertHelp : Int -> List Char -> Index -> Index
@@ -64,20 +54,9 @@ insertHelp id chars (Index { ends, cont }) =
 
 
 search : String -> Index -> List Int
-search string x =
-    case
-        string
-            |> toWords
-            |> List.map
-                (\keyword ->
-                    x |> seek (keyword |> String.toList) |> collect
-                )
-    of
-        [] ->
-            x |> collect
-
-        first :: rest ->
-            List.foldl SortedList.intersect first rest
+search keyword x =
+    seek (keyword |> String.toList) x
+        |> collect
 
 
 seek : List Char -> Index -> Index
@@ -103,13 +82,3 @@ collect (Index { ends, cont }) =
         )
         ends
         cont
-
-
-toWords : String -> List String
-toWords string =
-    case string |> String.trim |> String.toLower of
-        "" ->
-            []
-
-        nonempty ->
-            String.words nonempty

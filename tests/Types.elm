@@ -56,7 +56,9 @@ fill texts insert empty =
         |> List.indexedMap (\i text -> ( i + 1, text ))
         |> List.foldl
             (\( id, text ) struct ->
-                insert id text struct
+                text
+                    |> String.words
+                    |> List.foldl (insert id) struct
             )
             empty
 

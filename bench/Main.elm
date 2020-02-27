@@ -15,7 +15,7 @@ benchmarks =
     Benchmark.describe "prefix search"
         ([ "a", "am", "ampl", "amplifica", "amplifications" ]
             |> List.map
-                (compare Types.strings Types.trie)
+                (compare Types.trieset Types.trielist)
         )
 
 
