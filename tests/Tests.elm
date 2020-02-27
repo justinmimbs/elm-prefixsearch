@@ -6,16 +6,16 @@ import Types exposing (Index, exampleText, fill)
 
 suite : List ( String, Int, List String )
 suite =
-    [ test Types.strings
-    , test Types.trie
-    , test Types.trieset
-    , test Types.trielist
+    [ testIndex Types.strings
+    , testIndex Types.trie
+    , testIndex Types.trieset
+    , testIndex Types.trielist
     , tests_sortedList
     ]
 
 
-test : Index a -> ( String, Int, List String )
-test t =
+testIndex : Index a -> ( String, Int, List String )
+testIndex t =
     let
         x =
             t.empty
@@ -26,34 +26,57 @@ test t =
         y =
             t.empty |> fill exampleText t.insert
 
-        tests =
-            [ ( x, "", [ 1, 2, 3 ] )
-            , ( x, "j", [ 1, 2, 3 ] )
-            , ( x, "ja", [ 1, 2 ] )
-            , ( x, "jan", [ 1, 2 ] )
-            , ( x, "jane", [ 1 ] )
-            , ( x, "janet", [] )
-            , ( x, "a", [] )
-            , ( x, "d", [ 1, 2, 3 ] )
-            , ( x, "doe", [ 1, 3 ] )
-            , ( x, "doer", [] )
-
-            --
-            , ( y, "a", [ 3, 4, 8, 9, 11, 15, 22, 23, 25, 31, 36, 37, 44, 48, 50, 51, 53, 55, 56, 57, 60, 62, 66, 67, 68, 72, 74, 76, 86, 91, 92, 94, 102, 104, 105, 107, 108, 113, 118, 119, 121, 122, 125, 126, 127, 129, 130, 134, 136, 141, 144, 145, 148, 150 ] )
-            , ( y, "am", [ 48, 136, 145 ] )
-            , ( y, "amp", [ 48, 136 ] )
-            , ( y, "amplifi", [ 48, 136 ] )
-            , ( y, "amplific", [ 136 ] )
-            , ( y, "amplification", [ 136 ] )
-            , ( y, "amplifications", [] )
-            ]
-
-        failures =
-            List.filterMap
+        tests_search =
+            List.map
                 (\( struct, keyword, expected ) ->
                     testEqual keyword (struct |> t.search keyword) expected
                 )
-                tests
+                [ ( x, "", [ 1, 2, 3 ] )
+                , ( x, "j", [ 1, 2, 3 ] )
+                , ( x, "ja", [ 1, 2 ] )
+                , ( x, "jan", [ 1, 2 ] )
+                , ( x, "jane", [ 1 ] )
+                , ( x, "janet", [] )
+                , ( x, "a", [] )
+                , ( x, "d", [ 1, 2, 3 ] )
+                , ( x, "doe", [ 1, 3 ] )
+                , ( x, "doer", [] )
+
+                --
+                , ( y, "a", [ 3, 4, 8, 9, 11, 15, 22, 23, 25, 31, 36, 37, 44, 48, 50, 51, 53, 55, 56, 57, 60, 62, 66, 67, 68, 72, 74, 76, 86, 91, 92, 94, 102, 104, 105, 107, 108, 113, 118, 119, 121, 122, 125, 126, 127, 129, 130, 134, 136, 141, 144, 145, 148, 150 ] )
+                , ( y, "am", [ 48, 136, 145 ] )
+                , ( y, "amp", [ 48, 136 ] )
+                , ( y, "amplifi", [ 48, 136 ] )
+                , ( y, "amplific", [ 136 ] )
+                , ( y, "amplification", [ 136 ] )
+                , ( y, "amplifications", [] )
+                ]
+
+        tests_searchAll =
+            List.map
+                (\( struct, keywords, expected ) ->
+                    testEqual (keywords |> String.join " ") (struct |> t.searchAll keywords) expected
+                )
+                [ ( x, [], [ 1, 2, 3 ] )
+                , ( x, [ "" ], [ 1, 2, 3 ] )
+                , ( x, [ "j", "d" ], [ 1, 2, 3 ] )
+                , ( x, [ "j", "do" ], [ 1, 3 ] )
+                , ( x, [ "jo", "do" ], [ 3 ] )
+                , ( x, [ "jo", "dy" ], [] )
+
+                --
+                , ( y, [ "d", "c" ], [ 7, 17, 18, 23, 33, 34, 37, 39, 41, 50, 54, 61, 62, 73, 76, 93, 105, 112, 126, 131, 140, 149 ] )
+                , ( y, [ "de", "co" ], [ 7, 33, 39, 50, 54, 73, 105, 112, 126 ] )
+                , ( y, [ "def", "con" ], [ 54, 126 ] )
+                , ( y, [ "defa", "cons" ], [ 126 ] )
+                , ( y, [ "default", "conscience" ], [ 126 ] )
+                ]
+
+        tests =
+            tests_search ++ tests_searchAll
+
+        failures =
+            tests |> List.filterMap identity
     in
     ( t.name, List.length tests, failures )
 

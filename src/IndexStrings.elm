@@ -1,4 +1,4 @@
-module IndexStrings exposing (Index, empty, insert, search)
+module IndexStrings exposing (Index, empty, insert, search, searchAll)
 
 import Dict exposing (Dict)
 
@@ -42,3 +42,27 @@ search keyword dict =
                             )
                 )
             |> Dict.keys
+
+
+searchAll : List String -> Index -> List Int
+searchAll keywords dict =
+    Dict.foldr
+        (\id terms result ->
+            if
+                keywords
+                    |> List.all
+                        (\keyword ->
+                            terms
+                                |> List.any
+                                    (\term ->
+                                        term |> String.startsWith keyword
+                                    )
+                        )
+            then
+                id :: result
+
+            else
+                result
+        )
+        []
+        dict

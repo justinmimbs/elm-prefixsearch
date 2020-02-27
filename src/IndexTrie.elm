@@ -1,4 +1,4 @@
-module IndexTrie exposing (Index, empty, insert, search)
+module IndexTrie exposing (Index, empty, insert, search, searchAll)
 
 import Dict exposing (Dict)
 import Trie exposing (Trie)
@@ -42,3 +42,23 @@ search keyword dict =
                     terms |> Trie.match keyword
                 )
             |> Dict.keys
+
+
+searchAll : List String -> Index -> List Int
+searchAll keywords dict =
+    Dict.foldr
+        (\id terms result ->
+            if
+                keywords
+                    |> List.all
+                        (\keyword ->
+                            terms |> Trie.match keyword
+                        )
+            then
+                id :: result
+
+            else
+                result
+        )
+        []
+        dict

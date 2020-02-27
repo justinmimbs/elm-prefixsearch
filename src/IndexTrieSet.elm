@@ -1,4 +1,4 @@
-module IndexTrieSet exposing (Index, empty, insert, search)
+module IndexTrieSet exposing (Index, empty, insert, search, searchAll)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
@@ -53,10 +53,31 @@ insertHelp id chars (Index { ends, cont }) =
                 }
 
 
-search : String -> Index -> List Int
-search keyword x =
+search_ : String -> Index -> Set Int
+search_ keyword x =
     seek (keyword |> String.toList) x
         |> collect
+
+
+search : String -> Index -> List Int
+search keyword x =
+    search_ keyword x |> Set.toList
+
+
+searchAll : List String -> Index -> List Int
+searchAll keywords x =
+    (case keywords of
+        [] ->
+            collect x
+
+        first :: rest ->
+            List.foldl
+                (\next result ->
+                    search_ next x |> Set.intersect result
+                )
+                (search_ first x)
+                rest
+    )
         |> Set.toList
 
 

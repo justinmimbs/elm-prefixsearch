@@ -1,4 +1,4 @@
-module IndexTrieList exposing (Index, empty, insert, search)
+module IndexTrieList exposing (Index, empty, insert, search, searchAll)
 
 import Dict exposing (Dict)
 import SortedList
@@ -57,6 +57,21 @@ search : String -> Index -> List Int
 search keyword x =
     seek (keyword |> String.toList) x
         |> collect
+
+
+searchAll : List String -> Index -> List Int
+searchAll keywords x =
+    case keywords of
+        [] ->
+            collect x
+
+        first :: rest ->
+            List.foldl
+                (\next result ->
+                    search next x |> SortedList.intersect result
+                )
+                (search first x)
+                rest
 
 
 seek : List Char -> Index -> Index

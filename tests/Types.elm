@@ -11,6 +11,7 @@ type alias Index a =
     , empty : a
     , insert : Int -> String -> a -> a
     , search : String -> a -> List Int
+    , searchAll : List String -> a -> List Int
     }
 
 
@@ -20,6 +21,7 @@ strings =
     , empty = IndexStrings.empty
     , insert = IndexStrings.insert
     , search = IndexStrings.search
+    , searchAll = IndexStrings.searchAll
     }
 
 
@@ -29,6 +31,7 @@ trie =
     , empty = IndexTrie.empty
     , insert = IndexTrie.insert
     , search = IndexTrie.search
+    , searchAll = IndexTrie.searchAll
     }
 
 
@@ -38,6 +41,7 @@ trieset =
     , empty = IndexTrieSet.empty
     , insert = IndexTrieSet.insert
     , search = IndexTrieSet.search
+    , searchAll = IndexTrieSet.searchAll
     }
 
 
@@ -47,6 +51,7 @@ trielist =
     , empty = IndexTrieList.empty
     , insert = IndexTrieList.insert
     , search = IndexTrieList.search
+    , searchAll = IndexTrieList.searchAll
     }
 
 
